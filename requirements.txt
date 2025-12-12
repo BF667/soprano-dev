@@ -1,0 +1,4 @@
+lmdeploy
+torch
+unidecode
+scipy
