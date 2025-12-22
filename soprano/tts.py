@@ -12,7 +12,7 @@ class SopranoTTS:
     def __init__(self,
             backend='auto',
             device='cuda',
-            cache_size_mb=100,
+            cache_size_mb=10,
             decoder_batch_size=1):
         RECOGNIZED_DEVICES = ['cuda']
         RECOGNIZED_BACKENDS = ['auto', 'lmdeploy', 'transformers']
@@ -79,7 +79,7 @@ class SopranoTTS:
             repetition_penalty=repetition_penalty,
             out_dir=None)[0]
         if out_path:
-            wavfile.write(out_path, 32000, results.numpy())
+            wavfile.write(out_path, 32000, results.cpu().numpy())
         return results
 
     def infer_batch(self,
@@ -130,7 +130,7 @@ class SopranoTTS:
         if out_dir:
             os.makedirs(out_dir, exist_ok=True)
             for i in range(len(audio_concat)):
-                wavfile.write(f"{out_dir}/{i}.wav", 32000, audio_concat[i].numpy())
+                wavfile.write(f"{out_dir}/{i}.wav", 32000, audio_concat[i].cpu().numpy())
         return audio_concat
 
     def infer_stream(self,

@@ -16,7 +16,7 @@
 
 ## Overview
 
-**Soprano** is an ultra‑lightweight, open‑source text‑to‑speech (TTS) model designed for real‑time, high‑fidelity speech synthesis at unprecedented speed, all while remaining compact and easy to deploy.
+**Soprano** is an ultra‑lightweight, open‑source text‑to‑speech (TTS) model designed for real‑time, high‑fidelity speech synthesis at unprecedented speed, all while remaining compact and easy to deploy at **under 1 GB VRAM usage**.
 
 With only **80M parameters**, Soprano achieves a real‑time factor (RTF) of **~2000×**, capable of generating **10 hours of audio in under 20 seconds**. Soprano uses a **seamless streaming** technique that enables true real‑time synthesis in **<15 ms**, multiple orders of magnitude faster than existing TTS pipelines.
 
@@ -30,7 +30,8 @@ With only **80M parameters**, Soprano achieves a real‑time factor (RTF) of **~
 
 ```bash
 pip install soprano-tts
-pip install --force-reinstall torch==2.8.0 --index-url https://download.pytorch.org/whl/cu126
+pip uninstall -y torch
+pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cu126
 ```
 
 ### Install from source
@@ -39,7 +40,8 @@ pip install --force-reinstall torch==2.8.0 --index-url https://download.pytorch.
 git clone https://github.com/ekwek1/soprano.git
 cd soprano
 pip install -e .
-pip install --force-reinstall torch==2.8.0 --index-url https://download.pytorch.org/whl/cu126
+pip uninstall -y torch
+pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cu126
 ```
 
 > **Note**: Soprano uses **LMDeploy** to accelerate inference by default. If LMDeploy cannot be installed in your environment, Soprano can fall back to the HuggingFace **transformers** backend (with slower performance). To enable this, pass `backend='transformers'` when creating the TTS model.
@@ -51,13 +53,15 @@ pip install --force-reinstall torch==2.8.0 --index-url https://download.pytorch.
 ```python
 from soprano import SopranoTTS
 
-model = SopranoTTS()
+model = SopranoTTS(backend='auto', device='cuda', cache_size_mb=10, decoder_batch_size=1)
 ```
+
+> **Tip**: You can increase cache_size_mb and decoder_batch_size to increase inference speed at the cost of higher memory usage.
 
 ### Basic inference
 
 ```python
-out = model.infer("Hello world!")
+out = model.infer("Hello world!") # can achieve 2000x real-time with sufficiently long input!
 ```
 
 ### Save output to a file
@@ -80,7 +84,7 @@ out = model.infer(
 ### Batched inference
 
 ```python
-out = model.infer_batch(["Hello world!"] * 10)
+out = model.infer_batch(["Hello world!"] * 10) # can achieve 2000x real-time with sufficiently large input size!
 ```
 
 #### Save batch outputs to a directory
@@ -99,7 +103,7 @@ stream = model.infer_stream("Hello world!", chunk_size=1)
 # Audio chunks can be accessed via an iterator
 chunks = []
 for chunk in stream:
-    chunks.append(chunk)
+    chunks.append(chunk) # first chunk arrives in <15 ms!
 
 out = torch.cat(chunks)
 ```
