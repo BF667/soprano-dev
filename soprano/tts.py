@@ -59,6 +59,7 @@ class SopranoTTS:
                 new_sentence = re.sub(r"[^A-Za-z !\$%&'*+,-./0123456789<>?_]", "", sentence)
                 new_sentence = re.sub(r"[<>/_+]", "", new_sentence)
                 new_sentence = re.sub(r"\.\.[^\.]", ".", new_sentence)
+                new_sentence = re.sub(r"\s+", " ", new_sentence)
                 new_len = len(new_sentence)
                 if old_len != new_len:
                     print(f"Warning: unsupported characters found in sentence: {sentence}\n\tThese characters have been removed.")
