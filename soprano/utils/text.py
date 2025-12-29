@@ -56,6 +56,7 @@ _cased_abbreviations = [(re.compile('\\b%s\\b' % x[0]), x[1]) for x in [
     ('GPUs', 'g p u\'s'),
     ('GPU', 'g p u'),
     ('Ave', 'avenue'),
+    ('etc', 'etcetera'),
 ]]
 
 def expand_abbreviations(text):
